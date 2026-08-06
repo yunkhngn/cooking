@@ -17,7 +17,7 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
         <header className="flex items-center justify-between border-b border-[#E2E8F0] pb-5">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-[#E05D38] px-3.5 py-1 text-xs font-bold text-white shadow-sm">
-              <span>✨ Dinner AI</span>
+              <span>Dinner AI</span>
             </div>
             <h1 className="mt-3 text-2xl font-black text-[#1E293B] tracking-tight">
               {toSentenceCase(menu.menuName)}
@@ -45,8 +45,8 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
 
         {/* Main Dishes & Recipes */}
         <section className="space-y-4">
-          <h2 className="text-base font-bold text-[#1E293B] flex items-center gap-2">
-            <span>🍳</span> Danh Sách Món Chính & Cách Làm
+          <h2 className="text-base font-bold text-[#1E293B]">
+            Danh Sách Món Chính & Cách Làm
           </h2>
           {menu.dishes.map((dish, index) => (
             <div
@@ -63,7 +63,7 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
                 </div>
                 <div className="text-right text-xs space-y-1">
                   <span className="inline-block rounded-md bg-[#F1F5F9] px-2 py-0.5 font-medium text-[#475569]">
-                    ⏱️ {dish.cookTime} phút • {dish.difficulty}
+                    {dish.cookTime} phút • {dish.difficulty}
                   </span>
                   <p className="font-semibold text-[#0F766E]">{vnd(dish.price)}</p>
                 </div>
@@ -72,8 +72,8 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
               {/* Ingredients & Steps */}
               <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#F1F5F9] text-xs">
                 <div>
-                  <p className="font-bold text-[#334155] mb-1.5 flex items-center gap-1">
-                    🥗 Nguyên liệu:
+                  <p className="font-bold text-[#334155] mb-1.5">
+                    Nguyên liệu:
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-[#475569]">
                     {dish.ingredients.map((ing, i) => (
@@ -82,8 +82,8 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
                   </ul>
                 </div>
                 <div>
-                  <p className="font-bold text-[#334155] mb-1.5 flex items-center gap-1">
-                    👩‍🍳 Cách làm:
+                  <p className="font-bold text-[#334155] mb-1.5">
+                    Cách làm:
                   </p>
                   <ol className="list-decimal list-inside space-y-1 text-[#475569]">
                     {dish.steps.map((step, i) => (
@@ -99,8 +99,8 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
         {/* Side Dishes */}
         {Boolean(menu.sideDishes?.length) && (
           <section className="rounded-2xl border border-[#CCFBF1] bg-[#F0FDFA] p-4">
-            <h3 className="text-xs font-bold text-[#0F766E] mb-2 flex items-center gap-1.5">
-              <span>🍚</span> Món Phụ & Đồ Ăn Kèm
+            <h3 className="text-xs font-bold text-[#0F766E] mb-2">
+              Món Phụ & Đồ Ăn Kèm
             </h3>
             <div className="flex flex-wrap gap-2">
               {menu.sideDishes?.map((side) => (
@@ -117,8 +117,8 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
 
         {/* Shopping List */}
         <section className="rounded-2xl border border-[#E2E8F0] bg-white p-5 space-y-3">
-          <h2 className="text-sm font-bold text-[#1E293B] flex items-center gap-2">
-            <span>🛒</span> Danh Sách Đi Chợ
+          <h2 className="text-sm font-bold text-[#1E293B]">
+            Danh Sách Đi Chợ
           </h2>
           <div className="grid grid-cols-2 gap-4 text-xs">
             <div>

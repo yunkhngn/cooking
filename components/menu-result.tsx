@@ -200,7 +200,7 @@ export function MenuResult({
               disabled={isExporting}
               className="inline-flex items-center gap-2 rounded-control bg-teal px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-60"
             >
-              <span>{isExporting ? "Đang tạo ảnh…" : "Tải ảnh thực đơn 📸"}</span>
+              <span>{isExporting ? "Đang tạo ảnh…" : "Tải ảnh thực đơn"}</span>
             </button>
           )}
         </motion.div>
@@ -256,8 +256,7 @@ export function MenuResult({
           animate={{ opacity: 1, y: 0 }}
           className="rounded-card border border-hairline bg-surface/90 p-5 shadow-card backdrop-blur-sm"
         >
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">🍚</span>
+          <div className="mb-3">
             <h3 className="font-semibold text-ink text-base">Món phụ & Đồ ăn kèm</h3>
           </div>
           <div className="flex flex-wrap gap-2">
