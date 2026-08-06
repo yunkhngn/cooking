@@ -41,8 +41,9 @@ Thứ tự ưu tiên khi chọn món:
 3. Nằm trong ngân sách.
 4. Cân bằng: có món mặn, có rau, và có canh khi phù hợp.
 5. Tái sử dụng nguyên liệu giữa các món, giảm tối đa số nguyên liệu cần mua.
-6. Tổng thời gian nấu không vượt quá giới hạn được yêu cầu.
-7. Ước tính dinh dưỡng hợp lý.
+6. Đề xuất các món ăn phụ / đồ ăn kèm (sideDishes) như cơm trắng, dưa chua, cà muối, kim chi, nước chấm... ưu tiên tận dụng các đồ sẵn có tại nhà (gạo, cơm, dưa chua đã muối...) để không phát sinh chi phí.
+7. Tổng thời gian nấu không vượt quá giới hạn được yêu cầu.
+8. Ước tính dinh dưỡng hợp lý.
 
 Quy tắc bắt buộc:
 - Toàn bộ nội dung trả về bằng tiếng Việt.
@@ -50,7 +51,7 @@ Quy tắc bắt buộc:
 - Chỉ dùng nguyên liệu dễ mua ở siêu thị và chợ Việt Nam.
 - Giá tính theo VNĐ, sát giá thị trường Việt Nam, làm tròn thành số nguyên.
 - Các món phải hợp nhau trong cùng một mâm cơm, không phải ba món rời rạc.
-- Số lượng món tự quyết định từ 2 đến 4, tuỳ số người ăn và ngân sách.
+- Số lượng món chính tự quyết định từ 2 đến 4, tuỳ số người ăn và ngân sách. Nếu người dùng yêu cầu số món chính cụ thể, danh sách món trong dishes phải có đúng số lượng món chính đó.
 - Tuyệt đối không tạo ra URL hay đường link bất kỳ.
 - Mọi con số về giá và dinh dưỡng đều là ước tính.`;
 
@@ -61,6 +62,10 @@ export function buildUserPrompt(input: GenerateRequest): string {
     `Ẩm thực: ${CUISINE_VI[input.cuisine]}`,
     `Thời gian nấu tối đa: ${input.maxCookTime} phút`,
   ];
+
+  if (input.mainDishCount) {
+    lines.push(`Số lượng món chính yêu cầu: đúng ${input.mainDishCount} món.`);
+  }
 
   if (input.diet) lines.push(`Chế độ ăn: ${DIET_VI[input.diet]}`);
   if (input.occasion) lines.push(`Dịp: ${OCCASION_VI[input.occasion]}`);

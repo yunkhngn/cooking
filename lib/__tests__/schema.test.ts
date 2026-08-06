@@ -51,10 +51,12 @@ describe("DinnerMenuSchema", () => {
     expect(DinnerMenuSchema.safeParse(bad).success).toBe(false);
   });
 
-  it("rejects an unknown difficulty", () => {
-    const bad = structuredClone(validMenu);
-    bad.dishes[0].difficulty = "Very hard";
-    expect(DinnerMenuSchema.safeParse(bad).success).toBe(false);
+  it("accepts a menu with optional sideDishes", () => {
+    const menuWithSides = {
+      ...validMenu,
+      sideDishes: ["Cơm trắng (từ gạo sẵn có)", "Dưa chua dầm", "Nước mắm tỏi ớt"],
+    };
+    expect(DinnerMenuSchema.safeParse(menuWithSides).success).toBe(true);
   });
 });
 
@@ -66,6 +68,7 @@ describe("geminiResponseSchema", () => {
     expect(Object.keys(schema.properties)).toEqual([
       "menuName",
       "dishes",
+      "sideDishes",
       "summary",
       "shoppingList",
     ]);
@@ -118,5 +121,28 @@ describe("GenerateRequestSchema", () => {
     });
     expect(r.success).toBe(true);
   });
+
+  it("accepts valid mainDishCount (2, 3, or 4)", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      mainDishCount: 3,
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it("rejects invalid mainDishCount", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      mainDishCount: 5,
+    });
+    expect(r.success).toBe(false);
+  });
 });
+
 

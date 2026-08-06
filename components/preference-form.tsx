@@ -30,6 +30,13 @@ const COOK_TIME_OPTIONS: SelectOption[] = [
   { value: "60", label: "60+ phút" },
 ];
 
+const MAIN_DISH_COUNT_OPTIONS: SelectOption[] = [
+  { value: "", label: "Tự động (2–4 món)" },
+  { value: "2", label: "2 món chính" },
+  { value: "3", label: "3 món chính" },
+  { value: "4", label: "4 món chính" },
+];
+
 const DIET_OPTIONS: SelectOption[] = [
   { value: "", label: "Không yêu cầu" },
   { value: "regular", label: "Bình thường" },
@@ -68,6 +75,7 @@ export function PreferenceForm({
   const [budgetDisplay, setBudgetDisplay] = useState(() => formatVndInput("150000"));
   const [cuisine, setCuisine] = useState<(typeof CUISINES)[number]>("vietnamese");
   const [maxCookTime, setMaxCookTime] = useState("30");
+  const [mainDishCount, setMainDishCount] = useState("");
   const [available, setAvailable] = useState("");
   const [avoid, setAvoid] = useState("");
   const [desired, setDesired] = useState("");
@@ -88,6 +96,7 @@ export function PreferenceForm({
       budget: parseVndInput(budgetDisplay),
       cuisine,
       maxCookTime: Number(maxCookTime),
+      mainDishCount: mainDishCount ? (Number(mainDishCount) as 2 | 3 | 4) : undefined,
       availableIngredients: splitList(available),
       avoidIngredients: splitList(avoid),
       desiredDishes: splitList(desired),
@@ -152,6 +161,17 @@ export function PreferenceForm({
             value={maxCookTime}
             onChange={setMaxCookTime}
             options={COOK_TIME_OPTIONS}
+            disabled={disabled}
+          />
+        </div>
+        <div>
+          <label className={label} htmlFor="mainDishCount">Số món chính (không bắt buộc)</label>
+          <CustomSelect
+            id="mainDishCount"
+            aria-label="Số món chính (không bắt buộc)"
+            value={mainDishCount}
+            onChange={setMainDishCount}
+            options={MAIN_DISH_COUNT_OPTIONS}
             disabled={disabled}
           />
         </div>

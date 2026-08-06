@@ -48,5 +48,17 @@ describe("PreferenceForm", () => {
       expect.objectContaining({ desiredDishes: ["Thịt kho tàu", "Canh chua"] }),
     );
   });
+
+  it("submits mainDishCount when selected", async () => {
+    const onSubmit = vi.fn();
+    render(<PreferenceForm onSubmit={onSubmit} />);
+    await userEvent.click(screen.getByRole("combobox", { name: /số món chính/i }));
+    await userEvent.click(screen.getByRole("option", { name: "3 món chính" }));
+    await userEvent.click(screen.getByRole("button", { name: /tạo thực đơn/i }));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ mainDishCount: 3 }),
+    );
+  });
 });
+
 

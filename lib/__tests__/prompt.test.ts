@@ -55,5 +55,10 @@ describe("buildUserPrompt", () => {
     expect(p).toContain("Thịt kho tàu");
     expect(p).toContain("Canh chua");
   });
+
+  it("includes mainDishCount requirement when specified", () => {
+    const p = buildUserPrompt({ ...base, mainDishCount: 3 });
+    expect(p).toContain("Số lượng món chính yêu cầu: đúng 3 món");
+  });
 });
 

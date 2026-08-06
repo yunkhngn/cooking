@@ -31,6 +31,7 @@ export const DishSchema = z.object({
 export const DinnerMenuSchema = z.object({
   menuName: z.string().min(1),
   dishes: z.array(DishSchema).min(2).max(4),
+  sideDishes: z.array(z.string()).optional(),
   summary: z.object({
     totalCost: z.number().int().nonnegative(),
     totalTime: z.number().int().positive(),
@@ -61,6 +62,7 @@ export const GenerateRequestSchema = z.object({
   budget: z.number().int().min(20000).max(2000000),
   cuisine: z.enum(CUISINES),
   maxCookTime: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60)]),
+  mainDishCount: z.union([z.literal(2), z.literal(3), z.literal(4)]).optional(),
   availableIngredients: z.array(z.string().min(1)).max(30).optional(),
   avoidIngredients: z.array(z.string().min(1)).max(30).optional(),
   desiredDishes: z.array(z.string().min(1)).max(10).optional(),

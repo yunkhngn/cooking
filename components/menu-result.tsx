@@ -214,6 +214,29 @@ export function MenuResult({
         {!menu && <Skeleton />}
       </div>
 
+      {Boolean(source.sideDishes?.length) && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-card border border-hairline bg-surface/90 p-5 shadow-card backdrop-blur-sm"
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">🍚</span>
+            <h3 className="font-semibold text-ink text-base">Món phụ & Đồ ăn kèm</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {source.sideDishes?.map((side) => (
+              <span
+                key={side}
+                className="inline-flex items-center rounded-full bg-teal-tint/80 border border-teal/20 px-3 py-1.5 text-sm font-medium text-teal"
+              >
+                {side}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {menu ? <ShoppingList list={menu.shoppingList} /> : <Skeleton />}
     </div>
   );
