@@ -46,9 +46,9 @@ describe("addHistoryEntry", () => {
     expect(readHistory(NOW)[0].dishes).toEqual(["Thịt kho trứng"]);
   });
 
-  it("keeps at most 7 entries, newest first", () => {
+  it("keeps at most 7 entries across different days, newest first", () => {
     for (let i = 0; i < 10; i++) {
-      addHistoryEntry([`Món ${i}`], new Date(NOW.getTime() - i * 1000));
+      addHistoryEntry([`Món ${i}`], new Date(NOW.getTime() - i * 86400000));
     }
     const entries = readHistory(NOW);
     expect(entries).toHaveLength(7);
@@ -66,7 +66,21 @@ describe("addHistoryEntry", () => {
     expect(() => addHistoryEntry(["Món"], NOW)).not.toThrow();
     spy.mockRestore();
   });
+
+  it("replaces an existing entry for the same calendar date when re-generated", () => {
+    addHistoryEntry(["Cá kho", "Canh chua"], NOW);
+    expect(readHistory(NOW)).toHaveLength(1);
+    expect(readHistory(NOW)[0].dishes).toEqual(["Cá kho", "Canh chua"]);
+
+    const LATER_SAME_DAY = new Date(NOW.getTime() + 3600000); // 1 hour later
+    addHistoryEntry(["Thịt nướng", "Rau luộc"], LATER_SAME_DAY);
+
+    const history = readHistory(LATER_SAME_DAY);
+    expect(history).toHaveLength(1);
+    expect(history[0].dishes).toEqual(["Thịt nướng", "Rau luộc"]);
+  });
 });
+
 
 describe("recentDishNames", () => {
   it("flattens, deduplicates, and caps at 30", () => {

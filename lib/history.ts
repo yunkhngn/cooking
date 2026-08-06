@@ -55,8 +55,11 @@ export function addHistoryEntry(dishes: string[], now: Date = new Date()): Histo
   const clean = dishes.map((d) => d.trim()).filter(Boolean);
   if (clean.length === 0) return readHistory(now);
 
+  const todayKey = now.toISOString().slice(0, 10);
+  const existing = readHistory(now).filter((e) => e.date.slice(0, 10) !== todayKey);
+
   const next = prune(
-    [{ date: now.toISOString(), dishes: clean }, ...readHistory(now)],
+    [{ date: now.toISOString(), dishes: clean }, ...existing],
     now,
   );
   if (!canUseStorage()) return next;
