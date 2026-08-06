@@ -142,7 +142,7 @@ export const MenuExportCard = forwardRef<HTMLDivElement, MenuExportCardProps>(
 
         {/* Footer */}
         <footer className="pt-2 text-center text-xs font-medium text-[#94A3B8] border-t border-[#E2E8F0]">
-          Dinner AI — Tối nay nhà mình ăn gì? | https://dinner-ai.vercel.app
+          Dinner AI — Tối nay nhà mình ăn gì? | @yun.khngn
         </footer>
       </div>
     );
@@ -162,11 +162,10 @@ function StatBox({
 }) {
   return (
     <div
-      className={`rounded-2xl p-3 text-center border ${
-        highlight
+      className={`rounded-2xl p-3 text-center border ${highlight
           ? "bg-[#FFF7ED] border-[#FFEDD5] text-[#E05D38]"
           : "bg-white border-[#E2E8F0] text-[#334155]"
-      }`}
+        }`}
     >
       <p className="text-[10px] font-medium opacity-75">{label}</p>
       <p className="text-sm font-black mt-0.5">{value}</p>
