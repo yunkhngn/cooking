@@ -11,20 +11,28 @@ import {
   addHistoryEntry,
   clearHistory,
   recentDishNames,
+  readLastMenu,
+  saveLastMenu,
 } from "@/lib/history";
-import type { GenerateRequest } from "@/lib/schema";
+import type { DinnerMenu, GenerateRequest } from "@/lib/schema";
 
 export default function Home() {
   const { status, partial, menu, error, generate, reset } = useMenuStream();
   const [recent, setRecent] = useState<string[]>([]);
+  const [savedMenu, setSavedMenu] = useState<DinnerMenu | null>(null);
 
   // Read on mount only: localStorage is unavailable during SSR.
-  useEffect(() => setRecent(recentDishNames(readHistory())), []);
+  useEffect(() => {
+    setRecent(recentDishNames(readHistory()));
+    setSavedMenu(readLastMenu());
+  }, []);
 
   useEffect(() => {
     if (status === "done" && menu) {
       const updated = addHistoryEntry(menu.dishes.map((d) => d.name));
       setRecent(recentDishNames(updated));
+      saveLastMenu(menu);
+      setSavedMenu(menu);
     }
   }, [status, menu]);
 
@@ -35,22 +43,23 @@ export default function Home() {
   function handleClear() {
     clearHistory();
     setRecent([]);
+    setSavedMenu(null);
   }
+
+  const activeMenu = menu ?? (status === "idle" ? savedMenu : null);
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
       <header className="mb-8">
         <span className="inline-flex items-center rounded-full bg-teal-tint px-4 py-1.5 text-sm font-medium text-teal">
-          Bữa tối trong vài giây
+          Tạo bởi @yun.khngn
         </span>
         <h1 className="mt-5 text-4xl font-bold leading-tight text-ink sm:text-5xl">
-          Tối nay nhà mình
-          <br />
-          <span className="text-coral">ăn gì?</span>
+          Tối nay
+          <span className="text-coral"> ăn gì?</span>
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-ink-muted">
-          Cho biết mấy người ăn và bao nhiêu tiền, phần còn lại để đây lo — thực
-          đơn, công thức, và danh sách đi chợ.
+          Xây dựng thực đơn cho gia đình dựa trên calo thiết yếu và tài chính cụ thể.
         </p>
       </header>
 
@@ -72,9 +81,15 @@ export default function Home() {
         </div>
       )}
 
-      {(status === "streaming" || status === "done") && (
-        <div className="mt-10">
-          <MenuResult menu={menu} partial={partial} />
+      {(status === "streaming" || activeMenu) && (
+        <div className="mt-10 space-y-3">
+          {status === "idle" && savedMenu && (
+            <div className="flex items-center gap-2 text-xs font-medium text-ink-muted">
+              <span className="inline-block h-2 w-2 rounded-full bg-teal" />
+              <span>Thực đơn gần nhất đã lưu:</span>
+            </div>
+          )}
+          <MenuResult menu={activeMenu} partial={partial} />
         </div>
       )}
     </main>
