@@ -96,7 +96,7 @@ function StatCard({ label, value, isEstimate = false, type, index }: StatCardPro
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.07 }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-card border border-hairline bg-surface/90 p-5 shadow-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-card border border-hairline bg-surface/90 p-6 shadow-card backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover sm:p-7"
     >
       <div className="flex items-center justify-between gap-2">
         <div
@@ -171,7 +171,7 @@ export function MenuResult({
       )}
 
       {summary ? (
-        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <StatCard
             index={0}
             type="cost"
@@ -200,7 +200,7 @@ export function MenuResult({
           />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => (
             <StatSkeleton key={i} />
           ))}
