@@ -48,4 +48,12 @@ describe("buildUserPrompt", () => {
     expect(p).toMatch(/Tránh lặp lại/);
     expect(p).toContain("Thịt kho trứng");
   });
+
+  it("lists desired dishes when provided", () => {
+    const p = buildUserPrompt({ ...base, desiredDishes: ["Thịt kho tàu", "Canh chua"] });
+    expect(p).toContain("Món ăn ưu tiên có trong thực đơn");
+    expect(p).toContain("Thịt kho tàu");
+    expect(p).toContain("Canh chua");
+  });
 });
+

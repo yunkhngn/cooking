@@ -75,6 +75,12 @@ export function buildUserPrompt(input: GenerateRequest): string {
     lines.push(`Nguyên liệu cần tránh: ${input.avoidIngredients.join(", ")}`);
   }
 
+  if (input.desiredDishes?.length) {
+    lines.push(
+      `Món ăn ưu tiên có trong thực đơn (hãy đưa các món này vào thực đơn nếu phù hợp ngân sách và thời gian): ${input.desiredDishes.join(", ")}`,
+    );
+  }
+
   if (input.recentDishes?.length) {
     lines.push(
       `Tránh lặp lại những món đã nấu trong tuần vừa rồi: ${input.recentDishes.join(", ")}`,

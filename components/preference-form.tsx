@@ -70,6 +70,7 @@ export function PreferenceForm({
   const [maxCookTime, setMaxCookTime] = useState("30");
   const [available, setAvailable] = useState("");
   const [avoid, setAvoid] = useState("");
+  const [desired, setDesired] = useState("");
   const [diet, setDiet] = useState("");
   const [occasion, setOccasion] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export function PreferenceForm({
       maxCookTime: Number(maxCookTime),
       availableIngredients: splitList(available),
       avoidIngredients: splitList(avoid),
+      desiredDishes: splitList(desired),
       diet: diet || undefined,
       occasion: occasion || undefined,
     };
@@ -173,6 +175,16 @@ export function PreferenceForm({
             onChange={setOccasion}
             options={OCCASION_OPTIONS}
             disabled={disabled}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={label} htmlFor="desired">Món ăn muốn có (không bắt buộc)</label>
+          <input
+            id="desired"
+            className={field}
+            placeholder="Thịt kho tàu, Canh chua"
+            value={desired}
+            onChange={(e) => setDesired(e.target.value)}
           />
         </div>
         <div className="sm:col-span-2">

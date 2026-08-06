@@ -38,4 +38,15 @@ describe("PreferenceForm", () => {
     render(<PreferenceForm onSubmit={vi.fn()} disabled />);
     expect(screen.getByRole("button", { name: /đang nấu/i })).toBeDisabled();
   });
+
+  it("splits comma-separated desired dishes into an array", async () => {
+    const onSubmit = vi.fn();
+    render(<PreferenceForm onSubmit={onSubmit} />);
+    await userEvent.type(screen.getByLabelText(/món ăn muốn có/i), "Thịt kho tàu, Canh chua");
+    await userEvent.click(screen.getByRole("button", { name: /tạo thực đơn/i }));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ desiredDishes: ["Thịt kho tàu", "Canh chua"] }),
+    );
+  });
 });
+

@@ -107,4 +107,16 @@ describe("GenerateRequestSchema", () => {
     });
     expect(r.success).toBe(false);
   });
+
+  it("accepts valid desiredDishes array", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      desiredDishes: ["Thịt kho tàu", "Canh chua"],
+    });
+    expect(r.success).toBe(true);
+  });
 });
+

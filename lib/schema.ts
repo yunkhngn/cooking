@@ -63,6 +63,7 @@ export const GenerateRequestSchema = z.object({
   maxCookTime: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60)]),
   availableIngredients: z.array(z.string().min(1)).max(30).optional(),
   avoidIngredients: z.array(z.string().min(1)).max(30).optional(),
+  desiredDishes: z.array(z.string().min(1)).max(10).optional(),
   diet: z.enum(DIETS).optional(),
   occasion: z.enum(OCCASIONS).optional(),
   recentDishes: z.array(z.string().min(1)).max(30).optional(),
