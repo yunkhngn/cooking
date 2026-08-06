@@ -1,6 +1,6 @@
 import { GenerateRequestSchema } from "@/lib/schema";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { streamMenuText } from "@/lib/gemini";
+import { startMenuStream } from "@/lib/gemini";
 
 export const runtime = "nodejs";
 
@@ -38,9 +38,12 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
+  // Await the handshake BEFORE constructing the Response. Everything that can
+  // fail without producing output — missing key, auth rejection, bad model,
+  // network error — fails here, while a status code is still ours to choose.
   let iterator: AsyncIterable<string>;
   try {
-    iterator = streamMenuText(parsed.data);
+    iterator = await startMenuStream(parsed.data);
   } catch {
     return jsonError("Không kết nối được tới AI. Vui lòng thử lại.", 502);
   }
