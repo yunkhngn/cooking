@@ -8,23 +8,47 @@ import {
   OCCASIONS,
   type GenerateRequest,
 } from "@/lib/schema";
+import { CustomSelect, type SelectOption } from "@/components/ui/custom-select";
+import { CustomAlert } from "@/components/ui/custom-alert";
 
-const CUISINE_LABEL: Record<(typeof CUISINES)[number], string> = {
-  vietnamese: "Việt Nam", japanese: "Nhật Bản", korean: "Hàn Quốc",
-  chinese: "Trung Hoa", thai: "Thái Lan", italian: "Ý",
-  american: "Mỹ", mixed: "Kết hợp",
-};
-const DIET_LABEL: Record<(typeof DIETS)[number], string> = {
-  regular: "Bình thường", healthy: "Lành mạnh", "high-protein": "Nhiều đạm",
-  vegetarian: "Chay", "low-carb": "Ít tinh bột",
-};
-const OCCASION_LABEL: Record<(typeof OCCASIONS)[number], string> = {
-  family: "Gia đình", date: "Hẹn hò", weekend: "Cuối tuần",
-  friends: "Bạn bè", comfort: "An ủi",
-};
+const CUISINE_OPTIONS: SelectOption[] = [
+  { value: "vietnamese", label: "Việt Nam" },
+  { value: "japanese", label: "Nhật Bản" },
+  { value: "korean", label: "Hàn Quốc" },
+  { value: "chinese", label: "Trung Hoa" },
+  { value: "thai", label: "Thái Lan" },
+  { value: "italian", label: "Ý" },
+  { value: "american", label: "Mỹ" },
+  { value: "mixed", label: "Kết hợp" },
+];
+
+const COOK_TIME_OPTIONS: SelectOption[] = [
+  { value: "15", label: "15 phút" },
+  { value: "30", label: "30 phút" },
+  { value: "45", label: "45 phút" },
+  { value: "60", label: "60+ phút" },
+];
+
+const DIET_OPTIONS: SelectOption[] = [
+  { value: "", label: "Không yêu cầu" },
+  { value: "regular", label: "Bình thường" },
+  { value: "healthy", label: "Lành mạnh" },
+  { value: "high-protein", label: "Nhiều đạm" },
+  { value: "vegetarian", label: "Chay" },
+  { value: "low-carb", label: "Ít tinh bột" },
+];
+
+const OCCASION_OPTIONS: SelectOption[] = [
+  { value: "", label: "Không yêu cầu" },
+  { value: "family", label: "Gia đình" },
+  { value: "date", label: "Hẹn hò" },
+  { value: "weekend", label: "Cuối tuần" },
+  { value: "friends", label: "Bạn bè" },
+  { value: "comfort", label: "An ủi" },
+];
 
 const field =
-  "w-full rounded-control border border-hairline bg-surface px-4 py-3 text-ink outline-none focus:border-teal focus:ring-2 focus:ring-teal/20";
+  "w-full rounded-control border border-hairline bg-surface px-4 py-3 text-ink outline-none transition focus:border-teal focus:ring-2 focus:ring-teal/20";
 const label = "mb-2 block text-sm font-medium text-ink";
 
 function splitList(value: string): string[] | undefined {
@@ -78,60 +102,99 @@ export function PreferenceForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label className={label} htmlFor="people">Số người ăn</label>
-          <input id="people" className={field} type="number" min={1} max={10}
-            value={people} onChange={(e) => setPeople(e.target.value)} />
+          <input
+            id="people"
+            className={field}
+            type="number"
+            min={1}
+            max={10}
+            value={people}
+            onChange={(e) => setPeople(e.target.value)}
+          />
         </div>
         <div>
           <label className={label} htmlFor="budget">Ngân sách (VNĐ)</label>
-          <input id="budget" className={field} type="number" step={10000}
-            value={budget} onChange={(e) => setBudget(e.target.value)} />
+          <input
+            id="budget"
+            className={field}
+            type="number"
+            step={10000}
+            value={budget}
+            onChange={(e) => setBudget(e.target.value)}
+          />
         </div>
         <div>
           <label className={label} htmlFor="cuisine">Ẩm thực</label>
-          <select id="cuisine" className={field} value={cuisine}
-            onChange={(e) => setCuisine(e.target.value as (typeof CUISINES)[number])}>
-            {CUISINES.map((c) => <option key={c} value={c}>{CUISINE_LABEL[c]}</option>)}
-          </select>
+          <CustomSelect
+            id="cuisine"
+            aria-label="Ẩm thực"
+            value={cuisine}
+            onChange={(val) => setCuisine(val as (typeof CUISINES)[number])}
+            options={CUISINE_OPTIONS}
+            disabled={disabled}
+          />
         </div>
         <div>
           <label className={label} htmlFor="cookTime">Thời gian nấu tối đa</label>
-          <select id="cookTime" className={field} value={maxCookTime}
-            onChange={(e) => setMaxCookTime(e.target.value)}>
-            {[15, 30, 45, 60].map((m) => (
-              <option key={m} value={m}>{m === 60 ? "60+ phút" : `${m} phút`}</option>
-            ))}
-          </select>
+          <CustomSelect
+            id="cookTime"
+            aria-label="Thời gian nấu tối đa"
+            value={maxCookTime}
+            onChange={setMaxCookTime}
+            options={COOK_TIME_OPTIONS}
+            disabled={disabled}
+          />
         </div>
         <div>
           <label className={label} htmlFor="diet">Chế độ ăn (không bắt buộc)</label>
-          <select id="diet" className={field} value={diet}
-            onChange={(e) => setDiet(e.target.value)}>
-            <option value="">Không yêu cầu</option>
-            {DIETS.map((d) => <option key={d} value={d}>{DIET_LABEL[d]}</option>)}
-          </select>
+          <CustomSelect
+            id="diet"
+            aria-label="Chế độ ăn (không bắt buộc)"
+            value={diet}
+            onChange={setDiet}
+            options={DIET_OPTIONS}
+            disabled={disabled}
+          />
         </div>
         <div>
           <label className={label} htmlFor="occasion">Dịp (không bắt buộc)</label>
-          <select id="occasion" className={field} value={occasion}
-            onChange={(e) => setOccasion(e.target.value)}>
-            <option value="">Không yêu cầu</option>
-            {OCCASIONS.map((o) => <option key={o} value={o}>{OCCASION_LABEL[o]}</option>)}
-          </select>
+          <CustomSelect
+            id="occasion"
+            aria-label="Dịp (không bắt buộc)"
+            value={occasion}
+            onChange={setOccasion}
+            options={OCCASION_OPTIONS}
+            disabled={disabled}
+          />
         </div>
         <div className="sm:col-span-2">
           <label className={label} htmlFor="available">Nguyên liệu sẵn có (không bắt buộc)</label>
-          <input id="available" className={field} placeholder="Trứng, Cà chua, Hành tây"
-            value={available} onChange={(e) => setAvailable(e.target.value)} />
+          <input
+            id="available"
+            className={field}
+            placeholder="Trứng, Cà chua, Hành tây"
+            value={available}
+            onChange={(e) => setAvailable(e.target.value)}
+          />
         </div>
         <div className="sm:col-span-2">
           <label className={label} htmlFor="avoid">Nguyên liệu cần tránh (không bắt buộc)</label>
-          <input id="avoid" className={field} placeholder="Hải sản, Nấm"
-            value={avoid} onChange={(e) => setAvoid(e.target.value)} />
+          <input
+            id="avoid"
+            className={field}
+            placeholder="Hải sản, Nấm"
+            value={avoid}
+            onChange={(e) => setAvoid(e.target.value)}
+          />
         </div>
       </div>
 
       {error && (
-        <p role="alert" className="mt-4 text-sm text-coral">{error}</p>
+        <div className="mt-5">
+          <CustomAlert variant="error" title="Thông tin không hợp lệ">
+            {error}
+          </CustomAlert>
+        </div>
       )}
 
       <button

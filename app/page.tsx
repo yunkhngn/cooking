@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PreferenceForm } from "@/components/preference-form";
 import { MenuResult } from "@/components/menu-result";
 import { HistoryBar } from "@/components/history-bar";
+import { CustomAlert } from "@/components/ui/custom-alert";
 import { useMenuStream } from "@/lib/use-menu-stream";
 import {
   readHistory,
@@ -59,18 +60,15 @@ export default function Home() {
       </div>
 
       {status === "error" && (
-        <div
-          role="alert"
-          className="mt-8 rounded-card border border-hairline bg-surface p-6 text-center shadow-card"
-        >
-          <p className="text-ink">{error}</p>
-          <button
-            type="button"
-            onClick={reset}
-            className="mt-4 rounded-control bg-teal px-5 py-2.5 text-sm font-semibold text-white"
+        <div className="mt-8">
+          <CustomAlert
+            variant="error"
+            title="Đã xảy ra lỗi"
+            onRetry={reset}
+            retryText="Thử lại"
           >
-            Thử lại
-          </button>
+            {error}
+          </CustomAlert>
         </div>
       )}
 

@@ -17,10 +17,13 @@ describe("HistoryBar", () => {
     expect(screen.getByText(/\+2 món/)).toBeInTheDocument();
   });
 
-  it("calls onClear when the clear button is pressed", async () => {
+  it("opens confirmation modal and calls onClear when confirmed", async () => {
     const onClear = vi.fn();
     render(<HistoryBar dishes={["A"]} onClear={onClear} />);
     await userEvent.click(screen.getByRole("button", { name: /xoá lịch sử/i }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    const confirmBtn = screen.getAllByRole("button", { name: /xoá lịch sử/i })[1];
+    await userEvent.click(confirmBtn);
     expect(onClear).toHaveBeenCalled();
   });
 });
