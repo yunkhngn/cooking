@@ -10,6 +10,7 @@ import {
 } from "@/lib/schema";
 import { CustomSelect, type SelectOption } from "@/components/ui/custom-select";
 import { CustomAlert } from "@/components/ui/custom-alert";
+import { formatVndInput, parseVndInput } from "@/lib/format";
 
 const CUISINE_OPTIONS: SelectOption[] = [
   { value: "vietnamese", label: "Việt Nam" },
@@ -64,7 +65,7 @@ export function PreferenceForm({
   disabled?: boolean;
 }) {
   const [people, setPeople] = useState("2");
-  const [budget, setBudget] = useState("150000");
+  const [budgetDisplay, setBudgetDisplay] = useState(() => formatVndInput("150000"));
   const [cuisine, setCuisine] = useState<(typeof CUISINES)[number]>("vietnamese");
   const [maxCookTime, setMaxCookTime] = useState("30");
   const [available, setAvailable] = useState("");
@@ -73,11 +74,17 @@ export function PreferenceForm({
   const [occasion, setOccasion] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  function handleBudgetChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    const formatted = formatVndInput(raw);
+    setBudgetDisplay(formatted);
+  }
+
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const candidate = {
       people: Number(people),
-      budget: Number(budget),
+      budget: parseVndInput(budgetDisplay),
       cuisine,
       maxCookTime: Number(maxCookTime),
       availableIngredients: splitList(available),
@@ -117,10 +124,11 @@ export function PreferenceForm({
           <input
             id="budget"
             className={field}
-            type="number"
-            step={10000}
-            value={budget}
-            onChange={(e) => setBudget(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            placeholder="150.000đ"
+            value={budgetDisplay}
+            onChange={handleBudgetChange}
           />
         </div>
         <div>
