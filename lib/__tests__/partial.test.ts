@@ -44,4 +44,32 @@ describe("parsePartial", () => {
     const partial = parsePartial<{ summary?: unknown }>(full.slice(0, upto));
     expect(partial?.summary).toBeUndefined();
   });
+
+  it("preserves complete arrays when later fields are mid-stream", () => {
+    // Use a four-key document shape to catch data loss when post-processing incorrectly
+    // removes complete array elements because the root object is still open.
+    const realShape = JSON.stringify({
+      menuName: "Bữa tối ấm cúng",
+      dishes: [
+        { name: "Thịt kho trứng", price: 60000 },
+        { name: "Canh chua cá", price: 45000 },
+      ],
+      summary: { totalCost: 105000 },
+      shoppingList: ["item1", "item2"],
+    });
+
+    // Truncate right after the dishes array closes but before summary is complete.
+    // This puts the root object and shoppingList field in the middle of streaming.
+    const cut = realShape.indexOf(",", realShape.indexOf("summary")) - 1;
+    const partial = parsePartial<{
+      dishes: { name: string; price: number }[];
+    }>(realShape.slice(0, cut));
+
+    // Both dishes must be present and complete—not discarded by overzealous filtering.
+    expect(partial?.dishes).toHaveLength(2);
+    expect(partial?.dishes?.[0]?.name).toBe("Thịt kho trứng");
+    expect(partial?.dishes?.[0]?.price).toBe(60000);
+    expect(partial?.dishes?.[1]?.name).toBe("Canh chua cá");
+    expect(partial?.dishes?.[1]?.price).toBe(45000);
+  });
 });
