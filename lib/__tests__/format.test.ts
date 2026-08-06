@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { vnd, formatVndInput, parseVndInput } from "@/lib/format";
+import { vnd, formatVndInput, parseVndInput, toSentenceCase } from "@/lib/format";
 
 describe("format utilities", () => {
   it("formats integer to standard vnd string", () => {
@@ -16,5 +16,14 @@ describe("format utilities", () => {
     expect(parseVndInput("100.000đ")).toBe(100000);
     expect(parseVndInput("200.000đ")).toBe(200000);
     expect(parseVndInput("")).toBe(0);
+  });
+
+  it("converts Title Case to standard Vietnamese sentence case", () => {
+    expect(toSentenceCase("Thực Đơn Cơm Nhà Bình Dân Ấm Cúng Cho 4 Người")).toBe(
+      "Thực đơn cơm nhà bình dân ấm cúng cho 4 người",
+    );
+    expect(toSentenceCase("Thực Đơn Món Ăn Việt Nam Cho 2 Người")).toBe(
+      "Thực đơn món ăn Việt Nam cho 2 người",
+    );
   });
 });

@@ -5,7 +5,7 @@ import type { DeepPartial } from "@/lib/partial";
 import type { Dish, DinnerMenu } from "@/lib/schema";
 import { DishCard } from "@/components/dish-card";
 import { ShoppingList } from "@/components/shopping-list";
-import { vnd } from "@/lib/format";
+import { vnd, toSentenceCase } from "@/lib/format";
 
 function isCompleteDish(dish: DeepPartial<Dish> | undefined): dish is Dish {
   return Boolean(
@@ -165,7 +165,7 @@ export function MenuResult({
         >
           <div className="h-7 w-2 rounded-full bg-coral" />
           <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            {source.menuName}
+            {toSentenceCase(source.menuName)}
           </h2>
         </motion.div>
       )}

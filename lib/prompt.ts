@@ -46,6 +46,7 @@ Thứ tự ưu tiên khi chọn món:
 
 Quy tắc bắt buộc:
 - Toàn bộ nội dung trả về bằng tiếng Việt.
+- Tên thực đơn (menuName) viết theo cú pháp tiếng Việt chuẩn (viết hoa chữ cái đầu tiên, không viết hoa từng chữ kiểu Title Case).
 - Chỉ dùng nguyên liệu dễ mua ở siêu thị và chợ Việt Nam.
 - Giá tính theo VNĐ, sát giá thị trường Việt Nam, làm tròn thành số nguyên.
 - Các món phải hợp nhau trong cùng một mâm cơm, không phải ba món rời rạc.
