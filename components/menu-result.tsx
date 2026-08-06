@@ -1,10 +1,13 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { DeepPartial } from "@/lib/partial";
 import type { Dish, DinnerMenu } from "@/lib/schema";
 import { DishCard } from "@/components/dish-card";
 import { ShoppingList } from "@/components/shopping-list";
+import { MenuExportCard } from "@/components/menu-export-card";
+import { exportMenuAsImage } from "@/lib/export-image";
 import { vnd, toSentenceCase } from "@/lib/format";
 
 function isCompleteDish(dish: DeepPartial<Dish> | undefined): dish is Dish {
@@ -148,6 +151,9 @@ export function MenuResult({
   menu: DinnerMenu | null;
   partial: DeepPartial<DinnerMenu> | null;
 }) {
+  const exportCardRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
   const source = menu ?? partial;
   if (!source) return null;
 
@@ -155,18 +161,48 @@ export function MenuResult({
   const complete = dishes.filter(isCompleteDish);
   const summary = source.summary;
 
+  async function handleExport() {
+    if (!exportCardRef.current || isExporting) return;
+    try {
+      setIsExporting(true);
+      await exportMenuAsImage(exportCardRef.current, `Dinner-AI-${Date.now()}.png`);
+    } catch {
+      // Export failed silently or cancelled
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
+      {menu && (
+        <div className="fixed -left-[9999px] top-0 pointer-events-none aria-hidden">
+          <MenuExportCard ref={exportCardRef} menu={menu} />
+        </div>
+      )}
+
       {source.menuName && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-3"
+          className="flex flex-wrap items-center justify-between gap-3"
         >
-          <div className="h-7 w-2 rounded-full bg-coral" />
-          <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-            {toSentenceCase(source.menuName)}
-          </h2>
+          <div className="flex items-center gap-3">
+            <div className="h-7 w-2 rounded-full bg-coral" />
+            <h2 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              {toSentenceCase(source.menuName)}
+            </h2>
+          </div>
+
+          {menu && (
+            <button
+              onClick={handleExport}
+              disabled={isExporting}
+              className="inline-flex items-center gap-2 rounded-control bg-teal px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-105 active:scale-95 disabled:opacity-60"
+            >
+              <span>{isExporting ? "Đang tạo ảnh…" : "Tải ảnh thực đơn 📸"}</span>
+            </button>
+          )}
         </motion.div>
       )}
 

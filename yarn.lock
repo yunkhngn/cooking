@@ -2483,6 +2483,7 @@ __metadata:
     eslint: "npm:^9"
     eslint-config-next: "npm:16.3.0"
     framer-motion: "npm:^13.0.0"
+    html-to-image: "npm:^1.11.13"
     jsdom: "npm:^30.0.1"
     next: "npm:16.3.0"
     partial-json: "npm:^0.1.7"
@@ -3520,6 +3521,13 @@ __metadata:
   dependencies:
     "@exodus/bytes": "npm:^1.6.0"
   checksum: 10c0/66dc3f6f5539cc3beb814fcbfae7eacf4ec38cf824d6e1425b72039b51a40f4456bd8541ba66f4f4fe09cdf885ab5cd5bae6ec6339d6895a930b2fdb83c53025
+  languageName: node
+  linkType: hard
+
+"html-to-image@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "html-to-image@npm:1.11.13"
+  checksum: 10c0/03bd7192d87b99499e37ff12a8e2b41ddce4cf8e33a93dfadff18df0f213434c7f1ba8328db2158f4805da07b7aec3c90aec3152908281153217e86784218b10
   languageName: node
   linkType: hard
 
