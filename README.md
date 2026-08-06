@@ -1,112 +1,122 @@
-# Dinner AI — Tối nay nhà mình ăn gì?
+# Dinner AI — What should we have for dinner tonight?
 
-Dinner AI là ứng dụng web trợ lý ẩm thực thông minh, giúp người dùng giải quyết nhanh chóng câu hỏi "Tối nay ăn gì?". Dựa trên số lượng người ăn, ngân sách, thời gian nấu và sở thích cá nhân, hệ thống tự động thiết lập thực đơn bữa tối hoàn chỉnh với công thức chi tiết, tính toán dinh dưỡng và danh sách đi chợ tiết kiệm.
+Dinner AI is an intelligent culinary web application designed to quickly answer the daily question: "What should we have for dinner tonight?". Powered by Google Gemini AI, the app automatically generates complete dinner menus based on party size, budget, cooking time, and personal dietary preferences, complete with step-by-step recipes, nutrition estimation, and a consolidated shopping list.
 
-## Tính năng chính
+## Key Features
 
-- **Gợi ý thực đơn tối ưu bằng AI**: Tự động cân đối các món mặn, món xào, món canh phù hợp với mâm cơm Việt Nam hoặc các phong cách ẩm thực khác (Nhật, Hàn, Trung, Thái, Ý, Mỹ).
-- **Tùy chỉnh linh hoạt**:
-  - Chọn chính xác số lượng món chính (2 món, 3 món, 4 món hoặc AI tự động đề xuất).
-  - Nhập món ăn mong muốn có trong thực đơn.
-  - Tùy chọn nguyên liệu sẵn có tại nhà để tận dụng tối đa.
-  - Loại bỏ các nguyên liệu cần tránh hoặc dị ứng.
-  - Thiết lập chế độ ăn (Lành mạnh, Nhiều đạm, Chay, Ít tinh bột) và dịp ăn uống (Gia đình, Hẹn hò, Cuối tuần).
-- **Món phụ và đồ ăn kèm**: Tự động đề xuất các món phụ (cơm trắng, dưa chua, cà muối, nước chấm...) tận dụng nguồn nguyên liệu có sẵn tại nhà để không phát sinh chi phí.
-- **Công thức & Dinh dưỡng chi tiết**:
-  - Hướng dẫn chế biến từng bước rõ ràng.
-  - Định lượng nguyên liệu chính xác.
-  - Ước tính calo, đạm (protein), tinh bột (carbs) và chất béo (fat).
-  - Tích hợp liên kết tìm kiếm công thức trên YouTube và Google.
-- **Danh sách đi chợ hợp nhất**: Tự động tổng hợp và phân loại nguyên liệu thành hai mục "Cần mua" và "Đã có sẵn tại nhà".
-- **Xuất ảnh thực đơn**: Tải thực đơn hoàn chỉnh dưới dạng file ảnh PNG chất lượng cao để lưu trực tiếp vào máy điện thoại hoặc máy tính.
-- **Quản lý lịch sử thông minh**: Lưu thực đơn gần nhất và quản lý lịch sử theo từng ngày. Khi người dùng tạo lại thực đơn trong cùng một ngày, hệ thống sẽ tự động cập nhật bản mới nhất.
+- **AI-Optimized Menu Generation**: Automatically balances main courses, stir-fries, soups, and side dishes tailored to Vietnamese home cooking or international cuisines (Japanese, Korean, Chinese, Thai, Italian, American).
+- **Flexible Customization**:
+  - Main dish count selection: Specify 2, 3, or 4 main dishes, or let the AI automatically determine the ideal count.
+  - Desired dishes: Request specific dishes you crave to be included in tonight's menu.
+  - Available ingredients: Utilize pantry items already at home to reduce food waste.
+  - Avoid list: Exclude unwanted ingredients or allergens.
+  - Dietary preferences & occasions: Support for Healthy, High-Protein, Vegetarian, Low-Carb diets, and occasions such as Family Dinner, Date Night, or Weekend Feast.
+- **Side Dishes & Pantry Staples**: Recommends complementary side dishes (steamed rice, pickles, dipping sauces) using items already available at home to avoid extra shopping costs.
+- **Comprehensive Recipes & Nutrition**:
+  - Step-by-step cooking instructions.
+  - Detailed ingredient lists with precise measurements.
+  - Nutrition estimates for calories, protein, carbohydrates, and fat.
+  - Integrated quick links to search recipe tutorials on YouTube and Google.
+- **Consolidated Shopping List**: Automatically combines and categorizes ingredients into "Need to Buy" and "Already Available at Home".
+- **Export Menu to Image**: Export and save the full menu as a high-resolution PNG image directly to your mobile photo gallery or computer.
+- **Smart History Management**: Manages history by calendar date, automatically updating and replacing same-day entries when a new menu is generated on the same day.
 
-## Công nghệ sử dụng
+## Tech Stack
 
 - **Framework**: Next.js 16 (App Router, Turbopack)
 - **UI & Styling**: React 19, TypeScript, Tailwind CSS, Framer Motion
-- **AI Engine**: Google GenAI SDK (`@google/genai` sử dụng mô hình Gemini 2.5 Flash)
-- **Validation**: Zod & Zod JSON Schema (Đảm bảo cấu trúc dữ liệu trả về từ Gemini AI)
-- **Xuất ảnh**: `html-to-image`
+- **AI Engine**: Google GenAI SDK (`@google/genai` using Gemini 2.5 Flash model)
+- **Validation**: Zod & Zod JSON Schema (Ensures strict structure contract with Gemini AI)
+- **Image Generation & Export**: `html-to-image`
 - **Testing**: Vitest, React Testing Library, Testing Library User Event
 
-## Cấu trúc dự án
+## Project Structure
 
 ```text
 cooking/
-├── app/                  # Route handlers và Layouts (App Router)
-│   ├── api/generate/     # API Route xử lý streaming thực đơn từ Gemini
-│   ├── globals.css       # Style toàn cục
-│   ├── layout.tsx        # Root Layout và cấu hình Metadata / OpenGraph
-│   └── page.tsx          # Trang chính ứng dụng
-├── components/           # Các React Component
-│   ├── ui/               # Custom UI controls (Select, Alert, Modal)
-│   ├── dish-card.tsx     # Thẻ hiển thị món ăn và công thức
-│   ├── history-bar.tsx   # Thanh hiển thị lịch sử món đã nấu
-│   ├── menu-export-card.tsx # Bố cục xuất ảnh thực đơn
-│   ├── menu-result.tsx   # Hiển thị kết quả thực đơn
-│   ├── preference-form.tsx # Form nhập tùy chọn thực đơn
-│   └── shopping-list.tsx # Danh sách đi chợ
-├── lib/                  # Thư viện và hàm bổ trợ
-│   ├── export-image.ts   # Hàm xử lý xuất ảnh PNG
-│   ├── format.ts         # Định dạng tiền tệ VNĐ và chuỗi
-│   ├── history.ts        # Quản lý lưu trữ localStorage
-│   ├── links.ts          # Tạo URL tìm kiếm YouTube và Google
-│   ├── prompt.ts         # System instruction và generator prompt cho Gemini
-│   ├── rate-limit.ts     # Giới hạn tần suất gọi API
-│   └── schema.ts         # Định nghĩa Zod Schemas và Gemini JSON Schema
-├── public/               # Tài nguyên tĩnh (Favicon, App Icons, Manifest, OG Images)
-└── docs/                 # Tài liệu thiết kế và kế hoạch triển khai
+├── app/                  # App Router pages and API routes
+│   ├── api/generate/     # Streaming API route interfacing with Gemini AI
+│   ├── globals.css       # Global styles
+│   ├── layout.tsx        # Root layout and metadata configuration
+│   └── page.tsx          # Main application page
+├── components/           # UI components
+│   ├── ui/               # Custom controls (Select, Alert, Modal)
+│   ├── dish-card.tsx     # Dish card with recipe steps and nutrition
+│   ├── history-bar.tsx   # History bar displaying recent dishes
+│   ├── menu-export-card.tsx # Printable infographic export layout
+│   ├── menu-result.tsx   # Menu result display container
+│   ├── preference-form.tsx # Preference input form
+│   └── shopping-list.tsx # Consolidated shopping list
+├── lib/                  # Utilities and core logic
+│   ├── export-image.ts   # Client-side PNG export helper
+│   ├── format.ts         # Currency and text formatting utilities
+│   ├── history.ts        # LocalStorage state management
+│   ├── links.ts          # External search link generators
+│   ├── prompt.ts         # System instructions and prompt builders
+│   ├── rate-limit.ts     # In-memory API rate limiter
+│   └── schema.ts         # Zod schemas and Gemini JSON schema definition
+├── public/               # Static assets (Favicons, App Icons, Manifest, OG Images)
+└── docs/                 # Design specs and implementation plans
 ```
 
-## Cài đặt và khởi chạy
+## Getting Started
 
-### 1. Yêu cầu hệ thống
+### Prerequisites
 
-- Node.js version 18.x trở lên
+- Node.js 18.x or higher
 - Yarn package manager
 
-### 2. Cài đặt Dependencies
+### Installation
+
+Clone the repository and install dependencies:
 
 ```bash
 yarn install
 ```
 
-### 3. Cấu hình biến môi trường
+### Environment Variables
 
-Tạo file `.env` tại thư mục gốc của dự án và điền Gemini API Key:
+Create a `.env` file in the root directory and add your Gemini API key:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 NEXT_PUBLIC_SITE_URL=https://dinner-ai.vercel.app
 ```
 
-### 4. Khởi chạy môi trường phát triển
+### Development Server
+
+Run the development server locally:
 
 ```bash
 yarn dev
 ```
 
-Mở trình duyệt và truy cập: `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Chạy bộ kiểm thử (Unit Tests)
+### Running Tests
+
+Execute the unit test suite:
 
 ```bash
 yarn test
 ```
 
-### 6. Biên dịch ứng dụng cho Production
+### Production Build
+
+Build the application for production:
 
 ```bash
 yarn build
 ```
 
-Chạy bản build Production:
+Start the production server:
 
 ```bash
 yarn start
 ```
 
-## Giấy phép
+## License
 
-Dự án được phát triển riêng bởi `@yun.khngn`.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+Developed by `@yun.khngn`.
