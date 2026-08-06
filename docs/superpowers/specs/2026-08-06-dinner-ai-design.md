@@ -166,17 +166,25 @@ Error responses are JSON with `{ error: string }` and a Vietnamese message:
 
 ## 6. Streaming and progressive rendering
 
-The model returns schema-constrained JSON. Gemini's `propertyOrdering` pins the
-emission order so the response is useful before it is complete:
+The model returns schema-constrained JSON. Gemini preserves **schema key order**
+in its output on 2.5-class models and later (implicit property ordering — the
+older explicit `propertyOrdering` array is no longer required), so declaring the
+Zod object keys in this order pins the emission order and makes the response
+useful before it is complete:
 
 ```
 menuName → dishes[] → summary → shoppingList
 ```
 
+This is load-bearing enough to be tested directly: a unit test asserts the
+derived JSON Schema's `properties` keys come out in exactly this order, so a
+careless reorder of the Zod object breaks a test rather than silently degrading
+the streaming UX.
+
 Flow:
 
-1. Route handler calls `generateContentStream` and pipes text chunks to the
-   response body unchanged.
+1. Route handler calls `interactions.create({ ..., stream: true })` and pipes
+   text deltas to the response body unchanged.
 2. Client accumulates chunks into a buffer.
 3. On each chunk, the client runs a tolerant partial-JSON parse (`partial.ts`,
    wrapping `partial-json`) and re-renders from whatever is currently valid.
@@ -225,15 +233,26 @@ and must be excluded from `needToBuy` and echoed into `alreadyHave`.
 
 ### Model configuration
 
-The model ID is read from `GEMINI_MODEL` (env), so it can be changed without a
-code edit. The exact current model ID and the shape of `thinkingConfig` **must be
-verified against Google's live documentation as the first implementation step** —
-they are not assumed from memory, and a wrong ID fails the request outright.
+Verified against Google's live documentation on 2026-08-06 rather than assumed:
 
-Menu generation is a real optimization problem (budget × ingredient reuse ×
-time × pairing), so the default targets a reasoning-capable tier rather than the
-cheapest one, with a documented lower-latency fallback if measured latency proves
-unacceptable.
+- SDK: `@google/genai`, client `new GoogleGenAI({ apiKey })`
+- Call: `ai.interactions.create({ model, input, response_format, stream })`
+- Structured output: `response_format: { type: "text", mime_type: "application/json", schema }`
+- Streaming: `stream: true`, then iterate events where
+  `event.event_type === "step.delta"` and `event.delta.type === "text"`,
+  reading `event.delta.text`
+- Non-streaming convenience accessor: `interaction.output_text`
+
+Default model `gemini-3.6-flash` — current stable, balances speed against
+intelligence, and is the model used throughout Google's own examples. Read from
+`GEMINI_MODEL` (env) so it can be changed without a code edit; a reasoning-tier
+model is the upgrade path if menu quality proves insufficient, and a
+`flash-lite` tier the downgrade path if latency does.
+
+**No thinking/reasoning-effort parameter is configured.** Its field name in this
+SDK generation was not verified, and this spec does not encode unverified API
+surface. Defaults apply. If menu quality warrants tuning it later, look it up
+then.
 
 ---
 
@@ -310,8 +329,43 @@ the endpoint as hardened.
 
 Mobile-first, single page, Vietnamese only (`<html lang="vi">`).
 
-**States:** idle form → streaming (skeletons + progressively appearing dish
-cards) → complete → error with retry.
+### Visual direction
+
+Modelled on the PetCare Clinic reference supplied by the user: teal + coral on a
+warm off-white ground, generously spaced, with rounded white cards, soft
+low-opacity shadows, pill-shaped badges, and small "floating" stat chips
+overlapping the hero visual.
+
+| Token | Value | Use |
+|---|---|---|
+| `--bg` | `#F6F9FA` | Page ground |
+| `--surface` | `#FFFFFF` | Cards, inputs |
+| `--border` | `#E4EDF0` | Hairline card and input borders |
+| `--ink` | `#16293C` | Headings, primary text |
+| `--ink-muted` | `#5A6B7C` | Body copy, secondary text |
+| `--teal` | `#3F8794` | Primary actions, chrome, trust elements |
+| `--teal-soft` | `#6FAFA3` | Headline second line, icon fills |
+| `--teal-tint` | `#DCEDEA` | Badge and chip backgrounds |
+| `--coral` | `#EF8A69` | Accent — dish emphasis, key CTA |
+| `--coral-tint` | `#FDEAE2` | Accent chip backgrounds |
+
+Radii: `12px` inputs and buttons, `20px` cards, full for pills.
+Shadow: `0 8px 24px rgba(22, 41, 60, 0.06)`, raised to `0 12px 32px rgba(22, 41, 60, 0.10)` on hover.
+Type: one geometric sans across headings and body, headings at weight 700 and
+noticeably large; body at weight 400 with generous line-height.
+
+**Divergence from the reference, deliberate:** the reference uses teal as the
+dominant colour. Teal reads clinical, and this is a food product where the
+imagery is the food itself. So the *structure* is copied faithfully — card
+shapes, spacing rhythm, floating chips, two-tone headline — while **coral
+carries the food content** (dish cards, primary CTA) and teal carries chrome
+(header, badges, secondary actions). Appetite colour on the food, trust colour
+on the frame.
+
+### States
+
+Idle form → streaming (skeletons + progressively appearing dish cards) →
+complete → error with retry.
 
 **Layout:** form at top; summary strip; dish cards; shopping list. Dish cards are
 collapsed by default showing name, description, price, calories, time, and
