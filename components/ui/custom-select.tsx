@@ -8,16 +8,28 @@ export interface SelectOption {
   label: string;
 }
 
-export interface CustomSelectProps {
+interface CustomSelectBaseProps {
   id?: string;
-  value: string;
-  onChange: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
   disabled?: boolean;
   "aria-label"?: string;
   className?: string;
 }
+
+type CustomSelectSingleProps = CustomSelectBaseProps & {
+  multiple?: false;
+  value: string;
+  onChange: (value: string) => void;
+};
+
+type CustomSelectMultiProps = CustomSelectBaseProps & {
+  multiple: true;
+  value: string[];
+  onChange: (value: string[]) => void;
+};
+
+export type CustomSelectProps = CustomSelectSingleProps | CustomSelectMultiProps;
 
 export function CustomSelect({
   id,
@@ -26,6 +38,7 @@ export function CustomSelect({
   options,
   placeholder = "Chọn...",
   disabled = false,
+  multiple = false,
   "aria-label": ariaLabel,
   className = "",
 }: CustomSelectProps) {
@@ -36,7 +49,11 @@ export function CustomSelect({
   const defaultId = useId();
   const selectId = id || defaultId;
 
-  const selectedOption = options.find((opt) => opt.value === value);
+  const selectedValues = multiple ? value : [value];
+  const selectedOptions = options.filter((opt) => selectedValues.includes(opt.value));
+  const buttonLabel = selectedOptions.length
+    ? selectedOptions.map((opt) => opt.label).join(", ")
+    : placeholder;
 
   // Close when clicking outside
   useEffect(() => {
@@ -55,10 +72,10 @@ export function CustomSelect({
   // Sync focused index with selected value when opened
   useEffect(() => {
     if (isOpen) {
-      const idx = options.findIndex((opt) => opt.value === value);
+      const idx = options.findIndex((opt) => selectedValues.includes(opt.value));
       setFocusedIndex(idx >= 0 ? idx : 0);
     }
-  }, [isOpen, options, value]);
+  }, [isOpen, options, selectedValues]);
 
   // Scroll focused option into view
   useEffect(() => {
@@ -79,8 +96,17 @@ export function CustomSelect({
         e.preventDefault();
         if (isOpen) {
           if (focusedIndex >= 0 && focusedIndex < options.length) {
-            onChange(options[focusedIndex].value);
-            setIsOpen(false);
+            const focusedValue = options[focusedIndex].value;
+            if (multiple) {
+              const exists = selectedValues.includes(focusedValue);
+              const next = exists
+                ? selectedValues.filter((item) => item !== focusedValue)
+                : [...selectedValues, focusedValue];
+              onChange(next);
+            } else {
+              onChange(focusedValue);
+              setIsOpen(false);
+            }
           }
         } else {
           setIsOpen(true);
@@ -133,7 +159,7 @@ export function CustomSelect({
         className="flex w-full items-center justify-between rounded-control border border-hairline bg-surface px-4 py-3 text-left text-sm font-medium text-ink shadow-sm outline-none transition duration-150 focus:border-teal focus:ring-2 focus:ring-teal/20 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <span className="truncate">
-          {selectedOption ? selectedOption.label : placeholder}
+          {buttonLabel}
         </span>
         <motion.svg
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -157,6 +183,7 @@ export function CustomSelect({
           <motion.div
             id={`${selectId}-listbox`}
             role="listbox"
+            aria-multiselectable={multiple ? "true" : undefined}
             ref={listboxRef}
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 4, scale: 1 }}
@@ -165,7 +192,7 @@ export function CustomSelect({
             className="absolute left-0 top-full z-50 max-h-60 w-full overflow-auto rounded-control border border-hairline bg-surface p-1 shadow-card outline-none"
           >
             {options.map((option, idx) => {
-              const isSelected = option.value === value;
+              const isSelected = selectedValues.includes(option.value);
               const isFocused = idx === focusedIndex;
 
               return (
@@ -174,6 +201,13 @@ export function CustomSelect({
                   role="option"
                   aria-selected={isSelected}
                   onClick={() => {
+                    if (multiple) {
+                      const next = isSelected
+                        ? selectedValues.filter((item) => item !== option.value)
+                        : [...selectedValues, option.value];
+                      onChange(next);
+                      return;
+                    }
                     onChange(option.value);
                     setIsOpen(false);
                   }}

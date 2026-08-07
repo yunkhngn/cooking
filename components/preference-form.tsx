@@ -38,7 +38,6 @@ const MAIN_DISH_COUNT_OPTIONS: SelectOption[] = [
 ];
 
 const DIET_OPTIONS: SelectOption[] = [
-  { value: "", label: "Không yêu cầu" },
   { value: "regular", label: "Bình thường" },
   { value: "healthy", label: "Lành mạnh" },
   { value: "high-protein", label: "Nhiều đạm" },
@@ -79,8 +78,9 @@ export function PreferenceForm({
   const [available, setAvailable] = useState("");
   const [avoid, setAvoid] = useState("");
   const [desired, setDesired] = useState("");
-  const [diet, setDiet] = useState("");
+  const [diet, setDiet] = useState<(typeof DIETS)[number][]>([]);
   const [occasion, setOccasion] = useState("");
+  const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function handleBudgetChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -100,8 +100,9 @@ export function PreferenceForm({
       availableIngredients: splitList(available),
       avoidIngredients: splitList(avoid),
       desiredDishes: splitList(desired),
-      diet: diet || undefined,
+      diet: diet.length ? diet : undefined,
       occasion: occasion || undefined,
+      note: note.trim() || undefined,
     };
     const parsed = GenerateRequestSchema.safeParse(candidate);
     if (!parsed.success) {
@@ -180,9 +181,11 @@ export function PreferenceForm({
           <CustomSelect
             id="diet"
             aria-label="Chế độ ăn (không bắt buộc)"
+            multiple
             value={diet}
-            onChange={setDiet}
+            onChange={(values) => setDiet(values as (typeof DIETS)[number][])}
             options={DIET_OPTIONS}
+            placeholder="Không yêu cầu"
             disabled={disabled}
           />
         </div>
@@ -225,6 +228,18 @@ export function PreferenceForm({
             placeholder="Hải sản, Nấm"
             value={avoid}
             onChange={(e) => setAvoid(e.target.value)}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <label className={label} htmlFor="note">Ghi chú thêm (không bắt buộc)</label>
+          <textarea
+            id="note"
+            className={field}
+            rows={3}
+            maxLength={500}
+            placeholder="Ví dụ: ưu tiên món dễ nấu cho trẻ em, ít dầu mỡ, không cay..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
           />
         </div>
       </div>

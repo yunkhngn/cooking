@@ -59,6 +59,35 @@ describe("PreferenceForm", () => {
       expect.objectContaining({ mainDishCount: 3 }),
     );
   });
+
+  it("submits multiple diet selections", async () => {
+    const onSubmit = vi.fn();
+    render(<PreferenceForm onSubmit={onSubmit} />);
+
+    await userEvent.click(screen.getByRole("combobox", { name: /chế độ ăn/i }));
+    await userEvent.click(screen.getByRole("option", { name: "Lành mạnh" }));
+    await userEvent.click(screen.getByRole("option", { name: "Ít tinh bột" }));
+    await userEvent.click(screen.getByRole("button", { name: /tạo thực đơn/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ diet: ["healthy", "low-carb"] }),
+    );
+  });
+
+  it("submits optional note when provided", async () => {
+    const onSubmit = vi.fn();
+    render(<PreferenceForm onSubmit={onSubmit} />);
+
+    await userEvent.type(
+      screen.getByLabelText(/ghi chú thêm/i),
+      "Ưu tiên món ít dầu mỡ và không cay.",
+    );
+    await userEvent.click(screen.getByRole("button", { name: /tạo thực đơn/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ note: "Ưu tiên món ít dầu mỡ và không cay." }),
+    );
+  });
 });
 
 

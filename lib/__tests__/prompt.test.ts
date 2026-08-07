@@ -60,5 +60,15 @@ describe("buildUserPrompt", () => {
     const p = buildUserPrompt({ ...base, mainDishCount: 3 });
     expect(p).toContain("Số lượng món chính yêu cầu: đúng 3 món");
   });
+
+  it("lists multiple diet preferences when provided", () => {
+    const p = buildUserPrompt({ ...base, diet: ["healthy", "low-carb"] });
+    expect(p).toContain("Chế độ ăn: Lành mạnh, Ít tinh bột");
+  });
+
+  it("includes user note when provided", () => {
+    const p = buildUserPrompt({ ...base, note: "Ưu tiên món dễ nấu." });
+    expect(p).toContain("Ghi chú thêm từ người dùng: Ưu tiên món dễ nấu.");
+  });
 });
 

@@ -30,6 +30,24 @@ describe("CustomSelect", () => {
     await userEvent.click(screen.getByRole("option", { name: "Lựa chọn 2" }));
     expect(onChange).toHaveBeenCalledWith("opt2");
   });
+
+  it("supports multi-select mode", async () => {
+    const onChange = vi.fn();
+    render(
+      <CustomSelect
+        value={[]}
+        onChange={onChange}
+        options={options}
+        multiple
+        placeholder="Không yêu cầu"
+        aria-label="Test Multi Select"
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("combobox", { name: "Test Multi Select" }));
+    await userEvent.click(screen.getByRole("option", { name: "Lựa chọn 1" }));
+    expect(onChange).toHaveBeenCalledWith(["opt1"]);
+  });
 });
 
 describe("CustomAlert", () => {

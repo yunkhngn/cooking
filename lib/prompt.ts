@@ -1,4 +1,4 @@
-import type { GenerateRequest } from "@/lib/schema";
+import { DIETS, type GenerateRequest } from "@/lib/schema";
 
 const CUISINE_VI: Record<GenerateRequest["cuisine"], string> = {
   vietnamese: "Việt Nam",
@@ -11,7 +11,7 @@ const CUISINE_VI: Record<GenerateRequest["cuisine"], string> = {
   mixed: "Kết hợp nhiều nền ẩm thực",
 };
 
-const DIET_VI: Record<NonNullable<GenerateRequest["diet"]>, string> = {
+const DIET_VI: Record<(typeof DIETS)[number], string> = {
   regular: "Bình thường",
   healthy: "Lành mạnh",
   "high-protein": "Nhiều đạm",
@@ -67,7 +67,9 @@ export function buildUserPrompt(input: GenerateRequest): string {
     lines.push(`Số lượng món chính yêu cầu: đúng ${input.mainDishCount} món.`);
   }
 
-  if (input.diet) lines.push(`Chế độ ăn: ${DIET_VI[input.diet]}`);
+  if (input.diet?.length) {
+    lines.push(`Chế độ ăn: ${input.diet.map((d) => DIET_VI[d]).join(", ")}`);
+  }
   if (input.occasion) lines.push(`Dịp: ${OCCASION_VI[input.occasion]}`);
 
   if (input.availableIngredients?.length) {
@@ -90,6 +92,10 @@ export function buildUserPrompt(input: GenerateRequest): string {
     lines.push(
       `Tránh lặp lại những món đã nấu trong tuần vừa rồi: ${input.recentDishes.join(", ")}`,
     );
+  }
+
+  if (input.note?.trim()) {
+    lines.push(`Ghi chú thêm từ người dùng: ${input.note.trim()}`);
   }
 
   return lines.join("\n");

@@ -143,6 +143,39 @@ describe("GenerateRequestSchema", () => {
     });
     expect(r.success).toBe(false);
   });
+
+  it("accepts multiple diet options", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      diet: ["healthy", "low-carb"],
+    });
+    expect(r.success).toBe(true);
+  });
+
+  it("rejects an empty diet array", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      diet: [],
+    });
+    expect(r.success).toBe(false);
+  });
+
+  it("accepts optional note", () => {
+    const r = GenerateRequestSchema.safeParse({
+      people: 2,
+      budget: 150000,
+      cuisine: "vietnamese",
+      maxCookTime: 30,
+      note: "Không ăn cay.",
+    });
+    expect(r.success).toBe(true);
+  });
 });
 
 

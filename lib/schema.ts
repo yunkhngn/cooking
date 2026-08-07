@@ -66,9 +66,10 @@ export const GenerateRequestSchema = z.object({
   availableIngredients: z.array(z.string().min(1)).max(30).optional(),
   avoidIngredients: z.array(z.string().min(1)).max(30).optional(),
   desiredDishes: z.array(z.string().min(1)).max(10).optional(),
-  diet: z.enum(DIETS).optional(),
+  diet: z.array(z.enum(DIETS)).min(1).max(DIETS.length).optional(),
   occasion: z.enum(OCCASIONS).optional(),
   recentDishes: z.array(z.string().min(1)).max(30).optional(),
+  note: z.string().trim().max(500).optional(),
 });
 
 export type Dish = z.infer<typeof DishSchema>;
