@@ -31,17 +31,16 @@ type CustomSelectMultiProps = CustomSelectBaseProps & {
 
 export type CustomSelectProps = CustomSelectSingleProps | CustomSelectMultiProps;
 
-export function CustomSelect({
-  id,
-  value,
-  onChange,
-  options,
-  placeholder = "Chọn...",
-  disabled = false,
-  multiple = false,
-  "aria-label": ariaLabel,
-  className = "",
-}: CustomSelectProps) {
+export function CustomSelect(props: CustomSelectProps) {
+  const {
+    id,
+    options,
+    placeholder = "Chọn...",
+    disabled = false,
+    "aria-label": ariaLabel,
+    className = "",
+  } = props;
+
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,11 +48,30 @@ export function CustomSelect({
   const defaultId = useId();
   const selectId = id || defaultId;
 
-  const selectedValues = multiple ? value : [value];
+  const multiple = Boolean(props.multiple);
+  const selectedValues: string[] = props.multiple
+    ? props.value
+    : props.value
+      ? [props.value]
+      : [];
+
   const selectedOptions = options.filter((opt) => selectedValues.includes(opt.value));
   const buttonLabel = selectedOptions.length
     ? selectedOptions.map((opt) => opt.label).join(", ")
     : placeholder;
+
+  const handleSelectOption = (optValue: string) => {
+    if (props.multiple) {
+      const isSelected = props.value.includes(optValue);
+      const next = isSelected
+        ? props.value.filter((item) => item !== optValue)
+        : [...props.value, optValue];
+      props.onChange(next);
+    } else {
+      props.onChange(optValue);
+      setIsOpen(false);
+    }
+  };
 
   // Close when clicking outside
   useEffect(() => {
@@ -97,16 +115,7 @@ export function CustomSelect({
         if (isOpen) {
           if (focusedIndex >= 0 && focusedIndex < options.length) {
             const focusedValue = options[focusedIndex].value;
-            if (multiple) {
-              const exists = selectedValues.includes(focusedValue);
-              const next = exists
-                ? selectedValues.filter((item) => item !== focusedValue)
-                : [...selectedValues, focusedValue];
-              onChange(next);
-            } else {
-              onChange(focusedValue);
-              setIsOpen(false);
-            }
+            handleSelectOption(focusedValue);
           }
         } else {
           setIsOpen(true);
@@ -200,17 +209,7 @@ export function CustomSelect({
                   key={option.value}
                   role="option"
                   aria-selected={isSelected}
-                  onClick={() => {
-                    if (multiple) {
-                      const next = isSelected
-                        ? selectedValues.filter((item) => item !== option.value)
-                        : [...selectedValues, option.value];
-                      onChange(next);
-                      return;
-                    }
-                    onChange(option.value);
-                    setIsOpen(false);
-                  }}
+                  onClick={() => handleSelectOption(option.value)}
                   onMouseEnter={() => setFocusedIndex(idx)}
                   className={`flex cursor-pointer items-center justify-between rounded-lg px-3 py-2.5 text-sm transition ${
                     isSelected
